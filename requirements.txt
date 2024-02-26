@@ -1,0 +1,4 @@
+numpy
+qoqo
+qoqo-strawberry-fields
+matplotlib
