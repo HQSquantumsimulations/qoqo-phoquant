@@ -16,7 +16,7 @@
 # the License.
 
 import numpy as np
-from typing import Tuple, List
+from typing import Tuple, List, Union, Any
 from qoqo import operations
 
 
@@ -58,8 +58,7 @@ def T_inv(m: int, n: int, theta: float, phi: float, nmax: int) -> np.array:
     return np.transpose(T(m, n, theta, -phi, nmax))
 
 
-def T_null(m: int, n: int, U: np.array) -> List[
-     int, int, float, float, int]:
+def T_null(m: int, n: int, U: np.array) -> List[Union[float, int]]:
     """Parameters of the T matrix to nullify U[m, n].
 
     Args:
@@ -68,7 +67,7 @@ def T_null(m: int, n: int, U: np.array) -> List[
         U: unitary matrix
 
     Returns:
-        List[int, int, float, float, int]: parameters for T function
+        List[Union[float, int]]: parameters for T function
 
     Raises:
         ValueError: U matrix is not square
@@ -95,8 +94,7 @@ def T_null(m: int, n: int, U: np.array) -> List[
     return [m-1, m, theta, phi, nmax]
 
 
-def inv_T_null(m: int, n: int, U: np.array) -> List[
-     int, int, float, float, int]:
+def inv_T_null(m: int, n: int, U: np.array) -> List[Union[float, int]]:
     """Parameters of the inverse T matrix to nullify U[m, n].
 
     Args:
@@ -105,7 +103,7 @@ def inv_T_null(m: int, n: int, U: np.array) -> List[
         U: unitary matrix
 
     Returns:
-        List[int, int, float, float, int]: parameters for T_inv function
+        List[Union[float, int]]: parameters for T_inv function
 
     Raises:
         ValueError: U matrix is not square
@@ -181,7 +179,7 @@ def interf_rect_decompose(U: np.array) -> Tuple[
     return T_inv_list, np.diag(mat), T_list
 
 
-def unitary_to_ops(U: np.array) -> List[operations.Operation]:
+def unitary_to_ops(U: np.array) -> List["operations.Operation"]:
     """Converts interferometer's unitary into list of qoqo operations.
 
     Args:
@@ -198,7 +196,7 @@ def unitary_to_ops(U: np.array) -> List[operations.Operation]:
     decomposition_thresh = 1.0e-13
 
     # T_i
-    ops = []
+    ops: List[operations.Operation] = []
 
     for n, m, theta_raw, phi_raw, _ in T_i:
         theta = theta_raw if np.abs(theta_raw) >= decomposition_thresh else 0
