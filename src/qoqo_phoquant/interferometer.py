@@ -81,17 +81,17 @@ def T_null(m: int, n: int, U: np.array) -> List[Union[float, int]]:
         # Nothing here
         theta = 0
         phi = 0
-    elif U[m-1, n] == 0:
+    elif U[m - 1, n] == 0:
         # Swap in the divide-by-zero case
         theta = np.pi / 2
         phi = 0
     else:
         # Non-trivial case
-        r = -U[m, n] / U[m-1, n]
+        r = -U[m, n] / U[m - 1, n]
         theta = np.arctan(np.abs(r))
         phi = np.angle(r)
 
-    return [m-1, m, theta, phi, nmax]
+    return [m - 1, m, theta, phi, nmax]
 
 
 def inv_T_null(m: int, n: int, U: np.array) -> List[Union[float, int]]:
@@ -129,8 +129,7 @@ def inv_T_null(m: int, n: int, U: np.array) -> List[Union[float, int]]:
     return [n, n + 1, theta, phi, nmax]
 
 
-def interf_rect_decompose(U: np.array) -> Tuple[
-     List[np.array], np.array, List[np.array]]:
+def interf_rect_decompose(U: np.array) -> Tuple[List[np.array], np.array, List[np.array]]:
     """Recatangular (Clement's) decomposition of the interferometer.
 
     Args:
@@ -158,7 +157,7 @@ def interf_rect_decompose(U: np.array) -> Tuple[
     # Lists with parameters
     T_list = []
     T_inv_list = []
-    for k, i in enumerate(range(n_channels - 2, - 1, - 1)):
+    for k, i in enumerate(range(n_channels - 2, -1, -1)):
         # Even
         if k % 2 == 0:
             for j in reversed(range(n_channels - 1 - i)):
@@ -219,9 +218,9 @@ def unitary_to_ops(U: np.array) -> List["operations.Operation"]:
             q = np.log(expphi).imag
         else:
             q = 0
-        if (q != 0):
-            print(operations.PhaseShift(n, np.mod(q, 2*np.pi)))
-            ops.append(operations.PhaseShift(n, np.mod(q, 2*np.pi)))
+        if q != 0:
+            print(operations.PhaseShift(n, np.mod(q, 2 * np.pi)))
+            ops.append(operations.PhaseShift(n, np.mod(q, 2 * np.pi)))
 
     # T
     for n, m, theta_raw, phi_raw, _ in reversed(T):
