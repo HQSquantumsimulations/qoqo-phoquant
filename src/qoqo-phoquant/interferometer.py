@@ -1,5 +1,6 @@
-# Copyright © 2024 HQS Quantum Simulations GmbH. All Rights Reserved. # noqa: D100:
-#  D100
+"""Python functions for interferometer unitary decomposition into qoqo operations."""
+
+# Copyright © 2024 HQS Quantum Simulations GmbH. All Rights Reserved.
 # Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except
 # in compliance with the License. You may obtain a copy of the License at
@@ -17,9 +18,6 @@
 import numpy as np
 from typing import Tuple, List
 from qoqo import operations
-
-"""Provides python functions for interferometer unitary decomposition into elemenary
- operations."""
 
 
 def T(m: int, n: int, theta: float, phi: float, nmax: int) -> np.array:

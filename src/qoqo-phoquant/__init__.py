@@ -1,1 +1,1 @@
-from .interferomener import interf_rect_decompose
+from .interferomener import unitary_to_ops
