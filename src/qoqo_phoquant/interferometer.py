@@ -16,7 +16,7 @@
 # the License.
 
 import numpy as np
-from typing import Tuple, List, Union, Any
+from typing import Tuple, List, Union
 from qoqo import operations
 
 
