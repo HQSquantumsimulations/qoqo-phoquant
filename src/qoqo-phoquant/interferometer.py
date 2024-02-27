@@ -1,37 +1,95 @@
+# Copyright © 2024 HQS Quantum Simulations GmbH. All Rights Reserved. # noqa: D100:
+#  D100
+# Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except
+# in compliance with the License. You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+#  distributed under the License
+# is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#  KIND, either express
+# or implied. See the License for the specific language governing permissions
+#  and limitations under
+# the License.
+
 import numpy as np
-from qoqo import operations, Circuit
+from typing import Tuple, List
+from qoqo import operations
 
-def T(m, n, theta, phi, nmax):
-    """The Clements T matrix"""
-    mat = np.identity(nmax, dtype=np.complex128)
-    mat[m, m] = np.exp(1j * phi) * np.cos(theta)
-    mat[m, n] = -np.sin(theta)
-    mat[n, m] = np.exp(1j * phi) * np.sin(theta)
-    mat[n, n] = np.cos(theta)
-    return mat
+"""Provides python functions for interferometer unitary decomposition into elemenary
+ operations."""
 
 
-def T_inv(m, n, theta, phi, nmax):
+def T(m: int, n: int, theta: float, phi: float, nmax: int) -> np.array:
+    """The Clements T matrix.
+
+    Args:
+            m: first index
+            n: second index
+            theta: transmittivity angle of beam splitter
+            phi: phase angle of beam splitter
+            nmax: square matrix dimension
+
+    Returns:
+            numpy array: Clements T matrix
+    """
+    t_mat = np.identity(nmax, dtype=np.complex128)
+    t_mat[m, m] = np.exp(1j * phi) * np.cos(theta)
+    t_mat[m, n] = -np.sin(theta)
+    t_mat[n, m] = np.exp(1j * phi) * np.sin(theta)
+    t_mat[n, n] = np.cos(theta)
+
+    return t_mat
+
+
+def T_inv(m: int, n: int, theta: float, phi: float, nmax: int) -> np.array:
+    """The inverse of the Clements T matrix.
+
+    Args:
+            m: first index.
+            n: second index.
+            theta: transmittivity angle of beam splitter
+            phi: phase angle of beam splitter
+            nmax: square matrix dimension
+
+    Returns:
+            numpy array: inverse Clements T matrix
+    """
     return np.transpose(T(m, n, theta, -phi, nmax))
 
 
-def T_null(m, n, U):
-    """T matrix to nullify the corresponding U elements"""
+def T_null(m: int, n: int, U: np.array) -> List[
+     int, int, float, float, int]:
+    """Parameters of the T matrix to nullify U[m, n].
+
+    Args:
+        m: first index
+        n: second index
+        U: unitary matrix
+
+    Returns:
+        List[int, int, float, float, int]: parameters for T function
+
+    Raises:
+        ValueError: U matrix is not square
+    """
     (nmax, mmax) = U.shape
 
     if nmax != mmax:
         raise ValueError("U is not a square matrix")
 
     if U[m, n] == 0:
-        # nothing here
+        # Nothing here
         theta = 0
         phi = 0
     elif U[m-1, n] == 0:
-        # swap in the divide-by-zero case
+        # Swap in the divide-by-zero case
         theta = np.pi / 2
         phi = 0
     else:
-        # No-trivial case
+        # Non-trivial case
         r = -U[m, n] / U[m-1, n]
         theta = np.arctan(np.abs(r))
         phi = np.angle(r)
@@ -39,19 +97,32 @@ def T_null(m, n, U):
     return [m-1, m, theta, phi, nmax]
 
 
-def inv_T_null(m, n, U):
-    """Inverse T matrix to nullify the corresponding U elements"""
+def inv_T_null(m: int, n: int, U: np.array) -> List[
+     int, int, float, float, int]:
+    """Parameters of the inverse T matrix to nullify U[m, n].
+
+    Args:
+        m: first index
+        n: second index
+        U: unitary matrix
+
+    Returns:
+        List[int, int, float, float, int]: parameters for T_inv function
+
+    Raises:
+        ValueError: U matrix is not square
+    """
     (nmax, mmax) = U.shape
 
     if nmax != mmax:
         raise ValueError("U must be a square matrix")
 
     if U[m, n] == 0:
-        # no swaps for the identity-like case
+        # No swaps for the identity-like case
         theta = 0
         phi = 0
     elif U[m, n + 1] == 0:
-        # swap in the divide-by-zero case
+        # Swap in the divide-by-zero case
         theta = np.pi / 2
         phi = 0
     else:
@@ -62,7 +133,20 @@ def inv_T_null(m, n, U):
     return [n, n + 1, theta, phi, nmax]
 
 
-def interf_rect_decompose(U:np.array):
+def interf_rect_decompose(U: np.array) -> Tuple[
+     List[np.array], np.array, List[np.array]]:
+    """Recatangular (Clement's) decomposition of the interferometer.
+
+    Args:
+        U: interferometer's unitary matrix
+
+    Returns:
+        Tuple[List[np.array], np.array, List[np.array]]: matrices for
+            Clement's decomposition
+
+    Raises:
+        ValueError: The interferometer matrix is not unitary
+    """
     # Check whether U is unitary
     mat = np.matrix(U)
     if not np.allclose(np.eye(mat.shape[0]), mat.H @ mat):
@@ -78,106 +162,84 @@ def interf_rect_decompose(U:np.array):
     # Lists with parameters
     T_list = []
     T_inv_list = []
-    for k, i in enumerate(range(n_channels -2, -1, -1)):
-        print('k=', k, 'i=', i)
+    for k, i in enumerate(range(n_channels - 2, - 1, - 1)):
         # Even
         if k % 2 == 0:
-            print('even')
             for j in reversed(range(n_channels - 1 - i)):
-                print('j=', j)
                 # Find nullyfying T_inv
-                #t_inv = []
                 t_inv = inv_T_null(i + j + 1, j, mat)
-                #print(t_inv)
                 # Update U
                 mat = mat @ T_inv(*t_inv)
                 # Update list of inverse T
                 T_inv_list.append(t_inv)
-                #print('Matrix after T_inv')
-                #print(mat)
         else:
-            print('odd')
             for j in range(n_channels - 1 - i):
-                #print('Mat before T')
-                #print(mat)
                 # Find nullyfuing T
-                #t = []
                 t = T_null(i + j + 1, j, mat)
-                #print('Transform')
-                #print(T(*t))
                 # Update U
                 mat = T(*t) @ mat
                 T_list.append(t)
-                #print('Matrix after T')
-                #print(mat)
 
     return T_inv_list, np.diag(mat), T_list
 
-#
-# Read the unitaries
-#
-U1 = np.load('U1.npy')
-U2 = np.load('U2.npy')
-#
-# Decompose
-#
-T_i, diag, T = interf_rect_decompose(U2)
-print('T_i', T_i)
-print('diag', diag)
-print('T', T)
 
-#
-# Convert numbers to operations
-#
-decomposition_thresh = 1.0e-13
+def unitary_to_ops(U: np.array) -> List[operations.Operation]:
+    """Converts interferometer's unitary into list of qoqo operations.
 
-# T_i
-ops = []
-print('T_inv', len(T_i))
-for n, m, theta, phi, _ in T_i:  # [0:len(T_i[0])-1]:
-    theta = theta if np.abs(theta) >= decomposition_thresh else 0
-    phi = phi if np.abs(phi) >= decomposition_thresh else 0
-    print(n, m, "theta = ", theta, "phi = ", phi)
-    if phi != 0:
-        # Phase shift
-        print(operations.PhaseShift(n, phi))
-        ops.append(operations.PhaseShift(n, phi))
-    if theta != 0:
-        # Beam splitter
-        print(operations.BeamSplitter(n, m, theta, 0))
-        ops.append(operations.BeamSplitter(n, m, theta, 0))
+    Args:
+        U: interferometer's unitary matrix
 
-# Diagonal part
-print('Diagonal')
-for n, expphi in enumerate(diag):
-    # Local phase shifts
+    Returns:
+        List[operations.Operation]: list of qoqo operations
+    """
+    T_i, diag, T = interf_rect_decompose(U)
 
-    if np.abs(expphi - 1) >= decomposition_thresh:
-        q = np.log(expphi).imag
-    else:
-        q = 0
-    if (q != 0):
-        # print(sf.ops.Rgate(np.mod(q, 2 * np.pi)), n)
-        print(operations.PhaseShift(n, np.mod(q, 2*np.pi)))
-        ops.append(operations.PhaseShift(n, np.mod(q, 2*np.pi)))
+    #
+    # Convert numbers to operations
+    #
+    decomposition_thresh = 1.0e-13
 
-# T
-print('T')
-for n, m, theta, phi, _ in reversed(T):
-    theta = theta if np.abs(theta) >= decomposition_thresh else 0
-    phi = phi if np.abs(phi) >= decomposition_thresh else 0
-    print(n, m, "theta = ", theta, "phi = ", phi)
+    # T_i
+    ops = []
 
-    if theta != 0:
-        # beamsplitter
-        print(operations.BeamSplitter(n, m, -theta, 0))
-        ops.append(operations.BeamSplitter(n, m, -theta, 0))
+    for n, m, theta_raw, phi_raw, _ in T_i:
+        theta = theta_raw if np.abs(theta_raw) >= decomposition_thresh else 0
+        phi = phi_raw if np.abs(phi_raw) >= decomposition_thresh else 0
 
-    if phi != 0:
-        # phaseshift
-        print(operations.PhaseShift(n, -phi))
-        ops.append(operations.PhaseShift(n, -phi))
+        if phi != 0:
+            # Phase shift
+            print(operations.PhaseShift(n, phi))
+            ops.append(operations.PhaseShift(n, phi))
+        if theta != 0:
+            # Beam splitter
+            print(operations.BeamSplitter(n, m, theta, 0))
+            ops.append(operations.BeamSplitter(n, m, theta, 0))
 
-print('Interferometer decomposition')
-for op in ops:
-    print(op)
+    # Diagonal part
+    for n, expphi in enumerate(diag):
+        # Local phase shifts
+
+        if np.abs(expphi - 1) >= decomposition_thresh:
+            q = np.log(expphi).imag
+        else:
+            q = 0
+        if (q != 0):
+            print(operations.PhaseShift(n, np.mod(q, 2*np.pi)))
+            ops.append(operations.PhaseShift(n, np.mod(q, 2*np.pi)))
+
+    # T
+    for n, m, theta_raw, phi_raw, _ in reversed(T):
+        theta = theta_raw if np.abs(theta_raw) >= decomposition_thresh else 0
+        phi = phi_raw if np.abs(phi_raw) >= decomposition_thresh else 0
+
+        if theta != 0:
+            # Beam Splitter
+            print(operations.BeamSplitter(n, m, -theta, 0))
+            ops.append(operations.BeamSplitter(n, m, -theta, 0))
+
+        if phi != 0:
+            # Phase shift
+            print(operations.PhaseShift(n, -phi))
+            ops.append(operations.PhaseShift(n, -phi))
+
+    return ops
