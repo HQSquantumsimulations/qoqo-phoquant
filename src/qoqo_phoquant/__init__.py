@@ -15,3 +15,4 @@
 #  and limitations under
 # the License.
 from .interferometer import unitary_to_ops
+from .molecules import molecule
