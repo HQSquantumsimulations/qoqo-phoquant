@@ -44,4 +44,4 @@ class molecule:
                 self.freq_ini = np.array(data_dict["freq_ini"])
                 self.freq_fin = np.array(data_dict["freq_fin"])
         except FileNotFoundError:
-            print('Data file does not exist.')
+            print("Data file does not exist.")
