@@ -18,7 +18,9 @@
 import numpy as np
 from qoqo_strawberry_fields import StrawberryFieldsBackend
 from qoqo import operations, Circuit
-from typing import Tuple
+from typing import Tuple, Dict
+import yaml
+import json
 
 
 def energy_for_samples(
@@ -43,8 +45,7 @@ def energy_for_samples(
     # Compute energies from GBS samples: for zero T
     energies = []
     for sample in samples:
-        energies.append(
-            np.dot(sample, freq_fin.T))
+        energies.append(np.dot(sample, freq_fin.T))
     # Add zero-point-corrected excitation energy
     energies = np.array(energies)
     energies = energies + E_ex
@@ -52,9 +53,9 @@ def energy_for_samples(
     return energies
 
 
-def mol_GBS(squeezing: np.array, shifts: np.array,
-            ops1: list, ops2: list, shots: int)\
-            -> Tuple[Circuit, np.array]:
+def mol_GBS(
+    squeezing: np.array, shifts: np.array, ops1: list, ops2: list, shots: int
+) -> Tuple[Circuit, np.array]:
     """GBS for vibronic molecular type of input using qoqo.
 
     Args:
@@ -91,9 +92,7 @@ def mol_GBS(squeezing: np.array, shifts: np.array,
 
     # Phase displacement
     for mode in range(nmodes):
-        circuit += operations.PhaseDisplacement(mode,
-                                                np.abs(shifts[mode]),
-                                                np.angle(shifts[mode]))
+        circuit += operations.PhaseDisplacement(mode, np.abs(shifts[mode]), np.angle(shifts[mode]))
 
     # Measure
     for mode in range(nmodes):
@@ -105,6 +104,25 @@ def mol_GBS(squeezing: np.array, shifts: np.array,
     result = backend.run_circuit(circuit)
 
     # Post-process results
-    samples = np.array(result[1]['ro'])
+    samples = np.array(result[1]["ro"])
 
     return circuit, samples
+
+
+def save_circuit(circuit: Circuit, name: str = "circuit") -> None:
+    """Saves qoqo circuit to .yaml file.
+
+    Args:
+        circuit: qoqo circuit
+        name: desired file name
+
+    """
+    # Circuit to json
+    cir_json_str = circuit.to_json()
+
+    # .json to dictionary
+    cir_dict = json.loads(cir_json_str)
+
+    # dictionary to .yaml and dump
+    with open(f"{name}.yaml", "w+") as yaml_f:
+        yaml.dump(cir_dict, yaml_f, allow_unicode=True)
