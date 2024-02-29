@@ -40,8 +40,7 @@ def energy_for_samples(
     # Compute energies from GBS samples: for zero T
     energies = []
     for sample in samples:
-        energies.append(
-            np.dot(sample, freq_fin.T))
+        energies.append(np.dot(sample, freq_fin.T))
     # Add zero-point-corrected excitation energy
     energies = np.array(energies)
     energies = energies + E_ex
