@@ -3,14 +3,14 @@ name: HQS CI tests for pure python repos/folders
 on:
   workflow_dispatch:
   pull_request:
-    branches: [$default-branch]
+    branches: ["main"]
 
 jobs:
   linting:
     uses: ./.github/workflows/reusable_linting_pure_python.yml
     with: 
-        python_folder: "NAME_OF_TOP_LEVEL_PYTHON_FOLDER"
-        linting_folder: "NAME_OF_PYTHON_FOLDER_TO_LINT"
+        python_folder: "./src/"
+        linting_folder: "./src/"
 
   # unittests:
   # uses: ./.github/workflows/reusable_tests_pure_python.yml
