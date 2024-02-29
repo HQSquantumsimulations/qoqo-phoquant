@@ -7,10 +7,10 @@ on:
 
 jobs:
   linting:
-  uses: ./.github/workflows/reusable_linting_pure_python.yml
-  with: 
-      python_folder: "NAME_OF_TOP_LEVEL_PYTHON_FOLDER"
-      linting_folder: "NAME_OF_PYTHON_FOLDER_TO_LINT"
+    uses: ./.github/workflows/reusable_linting_pure_python.yml
+    with: 
+        python_folder: "NAME_OF_TOP_LEVEL_PYTHON_FOLDER"
+        linting_folder: "NAME_OF_PYTHON_FOLDER_TO_LINT"
 
   # unittests:
   # uses: ./.github/workflows/reusable_tests_pure_python.yml
