@@ -16,6 +16,9 @@
 # the License.
 
 import numpy as np
+from qoqo_strawberry_fields import StrawberryFieldsBackend
+from qoqo import operations, Circuit
+from typing import Tuple
 
 
 def energy_for_samples(
@@ -47,3 +50,61 @@ def energy_for_samples(
     energies = energies + E_ex
 
     return energies
+
+
+def mol_GBS(squeezing: np.array, shifts: np.array,
+            ops1: list, ops2: list, shots: int)\
+            -> Tuple[Circuit, np.array]:
+    """GBS for vibronic molecular type of input using qoqo.
+
+    Args:
+        squeezing: squeezing parameters for the modes
+        shifts: phase shift parameters for the modes
+        ops1: list of qoqo operations for the first interferometer
+        ops2: list of qoqo operations for the second interferometer
+        shots: number of shots and measurements
+
+    Returns:
+        Tuple[Circuit, np.array]: qoqo circuit and measurements
+
+    """
+
+    # Extract number of modes
+    nmodes = shifts.shape[0]
+
+    # Create circuit
+    circuit = Circuit()
+    circuit += operations.DefinitionFloat("ro", nmodes, True)
+
+    # Interferomener 1
+    for op in ops1:
+        circuit += op
+
+    # Squeezing
+    squeezing_angle = 0
+    for mode in range(nmodes):
+        circuit += operations.Squeezing(mode, squeezing[mode], squeezing_angle)
+
+    # Interferometer 2
+    for op in ops2:
+        circuit += op
+
+    # Phase displacement
+    for mode in range(nmodes):
+        circuit += operations.PhaseDisplacement(mode,
+                                                np.abs(shifts[mode]),
+                                                np.angle(shifts[mode]))
+
+    # Measure
+    for mode in range(nmodes):
+        circuit += operations.PhotonDetection(mode, "ro", mode)
+
+    circuit += operations.PragmaSetNumberOfMeasurements(shots, "ro")
+
+    backend = StrawberryFieldsBackend(number_modes=3, device="gaussian")
+    result = backend.run_circuit(circuit)
+
+    # Post-process results
+    samples = np.array(result[1]['ro'])
+
+    return circuit, samples

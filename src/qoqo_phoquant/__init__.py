@@ -16,4 +16,4 @@
 # the License.
 from .interferometer import unitary_to_ops
 from .molecules import molecule
-from .spectrum_helpers import energy_for_samples
+from .spectrum_helpers import energy_for_samples, mol_GBS
