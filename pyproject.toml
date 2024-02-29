@@ -7,7 +7,7 @@ authors = [
 maintainers = [
     {name="Vladimir Rybkin", email="vladimir.rybkin@quantumsimulations.de"}
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.8"
 dynamic = ["version"]
 dependencies = [
     "pydantic",
