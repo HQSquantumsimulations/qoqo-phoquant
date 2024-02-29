@@ -54,13 +54,13 @@ def energy_for_samples(
 
 
 def mol_GBS(
-    squeezing: np.array, shifts: np.array, ops1: list, ops2: list, shots: int
+    squeezing: np.array, displ: np.array, ops1: list, ops2: list, shots: int
 ) -> Tuple[Circuit, np.array]:
     """GBS for vibronic molecular type of input using qoqo.
 
     Args:
         squeezing: squeezing parameters for the modes
-        shifts: phase shift parameters for the modes
+        displ: phase displacement parameters for the modes
         ops1: list of qoqo operations for the first interferometer
         ops2: list of qoqo operations for the second interferometer
         shots: number of shots and measurements
@@ -71,7 +71,7 @@ def mol_GBS(
     """
 
     # Extract number of modes
-    nmodes = shifts.shape[0]
+    nmodes = displ.shape[0]
 
     # Create circuit
     circuit = Circuit()
@@ -92,7 +92,7 @@ def mol_GBS(
 
     # Phase displacement
     for mode in range(nmodes):
-        circuit += operations.PhaseDisplacement(mode, np.abs(shifts[mode]), np.angle(shifts[mode]))
+        circuit += operations.PhaseDisplacement(mode, np.abs(displ[mode]), np.angle(displ[mode]))
 
     # Measure
     for mode in range(nmodes):
