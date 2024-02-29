@@ -47,7 +47,7 @@ version_scheme = "python-simplified-semver"
 # main_version = f"{version_tuple[0]}.{version_tuple[1]}"
 # ```
 # Also, if you use this functionality, you should uncomment the corresponding lines in the .gitignore
-version_file = "src/qoqo_phoquant/__version__.py"  # line to uncomment
+# version_file = "src/qoqo_phoquant/__version__.py"  # line to uncomment
 #
 # NOTE: in case the pyproject.toml is **not** located at the root folder of the repository,
 # the 'root' option should provide the **relative** path from the pyproject.toml to the
