@@ -1,0 +1,49 @@
+name: reusable_linting_pure_python
+
+on:
+  workflow_dispatch:
+    inputs:
+      python_folder:
+        description: "Location of the python folder"
+        required: true
+        type: string
+      linting_folder:
+        description: "Location of the python folder to be linted"
+        required: true
+        type: string
+  workflow_call:
+    inputs:
+      python_folder:
+        description: "Location of the python folder"
+        required: true
+        type: string
+      linting_folder:
+        description: "Location of the python folder to be linted"
+        required: true
+        type: string
+
+jobs:
+
+  test_python_linting_linux:
+    name: python_check_linting_linux
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          pip install ${{inputs.python_folder}}/[dev]
+      - name: Lint with ruff
+        run: |
+          cd ${{inputs.python_folder}}/
+          ruff check ${{inputs.linting_folder}}
+      - name: Mypy check
+        run: |
+          cd ${{inputs.python_folder}}/
+          mypy ${{inputs.linting_folder}}
+      - name: Black formatting check
+        run: |
+          cd ${{inputs.python_folder}}/
+          black --check ${{inputs.linting_folder}}
