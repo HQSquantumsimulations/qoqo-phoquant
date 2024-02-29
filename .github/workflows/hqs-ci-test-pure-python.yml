@@ -9,17 +9,17 @@ jobs:
   linting:
     uses: ./.github/workflows/reusable_linting_pure_python.yml
     with: 
-        python_folder: "./src/"
-        linting_folder: "./src/"
+        python_folder: "."
+        linting_folder: "."
 
-  # unittests:
-  # uses: ./.github/workflows/reusable_tests_pure_python.yml
-  #   with:
-  #     python_folder: "NAME_OF_TOP_LEVEL_PYTHON_FOLDER"
-  #     # Test code coverage of rust core is over 80 percent
-  #     test_code_coverage: true
-  #     # Run tests also on windows runners
-  #     windows: false
-  #     # Run tests also on macos runners
-  #     macos: true
-  #     python_3_12: true
+  unittests:
+    uses: ./.github/workflows/reusable_tests_pure_python.yml
+    with:
+      python_folder: "."
+      # Test code coverage of rust core is over 80 percent
+      test_code_coverage: false
+      # Run tests also on windows runners
+      windows: false
+      # Run tests also on macos runners
+      macos: false
+      python_3_12: true
