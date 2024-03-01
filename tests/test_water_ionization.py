@@ -17,6 +17,7 @@
 
 import numpy as np
 import math
+
 # qoqo_phoquant functionality
 from qoqo_phoquant import unitary_to_ops
 from qoqo_phoquant import molecule as mol
@@ -31,7 +32,7 @@ def test_water_ionization() -> np.array:
         one value per sample
     """
     # Make molecule
-    h2o = mol('../src/data/H2O_ion.json')
+    h2o = mol("../src/data/H2O_ion.json")
 
     # Decompose interferometers
     ops1 = unitary_to_ops(h2o.U1)
@@ -39,26 +40,25 @@ def test_water_ionization() -> np.array:
 
     # Sample
     nshots = 1000
-    cir, sam = sh.mol_GBS(squeezing=h2o.s, displ=h2o.alpha,
-                          ops1=ops1, ops2=ops2, shots=nshots)
+    cir, sam = sh.mol_GBS(squeezing=h2o.s, displ=h2o.alpha, ops1=ops1, ops2=ops2, shots=nshots)
 
     # Convert to energies
-    ener = sh.energy_for_samples(sam, h2o.freq_ini,
-                                 h2o.freq_fin, h2o.E_vertical)
+    ener = sh.energy_for_samples(sam, h2o.freq_ini, h2o.freq_fin, h2o.E_vertical)
 
-    sh.save_circuit(circuit=cir, name='H2O_ion_cir')
+    # Save circuit
+    sh.save_circuit(circuit=cir, name="H2O_ion_cir")
 
     # Checks
     errors = []
     # 1) Shape of sampling array
     ref_sam_shape = (nshots, len(h2o.freq_ini))
-    sample_shape_correct = (ref_sam_shape == sam.shape)
+    sample_shape_correct = ref_sam_shape == sam.shape
     if not sample_shape_correct:
         errors.append("Wrong number of GBS shots or vibrations.")
 
     # 2) Shape of energies array
     ref_ener_shape = (nshots,)
-    ener_shape_correct = (ref_ener_shape == ener.shape)
+    ener_shape_correct = ref_ener_shape == ener.shape
     if not ener_shape_correct:
         errors.append("Wrong number of sampled energies.")
 
