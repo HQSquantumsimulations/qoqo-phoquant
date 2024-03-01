@@ -18,7 +18,7 @@
 import numpy as np
 from qoqo_strawberry_fields import StrawberryFieldsBackend
 from qoqo import operations, Circuit
-from typing import Tuple, Dict
+from typing import Tuple
 import yaml
 import json
 
