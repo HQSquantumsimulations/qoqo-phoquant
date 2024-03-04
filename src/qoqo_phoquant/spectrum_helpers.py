@@ -19,8 +19,8 @@ import numpy as np
 
 
 def energy_for_samples(
-    samples: np.array, freq_ini: np.array, freq_fin: np.array, E_ex: float = 0
-) -> np.array:
+    samples: np.ndarray, freq_ini: np.ndarray, freq_fin: np.ndarray, E_ex: float = 0
+) -> np.ndarray:
     """Convert GBS samples to energies using molecular data.
 
     Args:
@@ -30,7 +30,7 @@ def energy_for_samples(
         E_ex: vertical excitation energy
 
     Returns:
-        numpy array: energies corresponding to the samples;
+        ndarray: energies corresponding to the samples;
         one value per sample
     """
     # First, we compute ZPEs and add to excitation energy
@@ -38,11 +38,11 @@ def energy_for_samples(
     zpe_fin = 0.5 * np.sum(freq_fin)
     E_ex = E_ex + zpe_fin - zpe_ini
     # Compute energies from GBS samples: for zero T
-    energies = []
+    ener_samples = []
     for sample in samples:
-        energies.append(np.dot(sample, freq_fin.T))
+        ener_samples.append(np.dot(sample, freq_fin.T))
     # Add zero-point-corrected excitation energy
-    energies = np.array(energies)
+    energies = np.array(ener_samples)
     energies = energies + E_ex
 
     return energies

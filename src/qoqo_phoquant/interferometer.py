@@ -16,11 +16,11 @@
 # the License.
 
 import numpy as np
-from typing import Tuple, List, Union
+from typing import Tuple, List
 from qoqo import operations
 
 
-def T(m: int, n: int, theta: float, phi: float, nmax: int) -> np.array:
+def T(m: int, n: int, theta: float, phi: float, nmax: int) -> np.ndarray:
     """The Clements T matrix.
 
     Args:
@@ -31,7 +31,7 @@ def T(m: int, n: int, theta: float, phi: float, nmax: int) -> np.array:
             nmax: square matrix dimension
 
     Returns:
-            numpy array: Clements T matrix
+            ndarray: Clements T matrix
     """
     t_mat = np.identity(nmax, dtype=np.complex128)
     t_mat[m, m] = np.exp(1j * phi) * np.cos(theta)
@@ -42,7 +42,7 @@ def T(m: int, n: int, theta: float, phi: float, nmax: int) -> np.array:
     return t_mat
 
 
-def T_inv(m: int, n: int, theta: float, phi: float, nmax: int) -> np.array:
+def T_inv(m: int, n: int, theta: float, phi: float, nmax: int) -> np.ndarray:
     """The inverse of the Clements T matrix.
 
     Args:
@@ -53,12 +53,12 @@ def T_inv(m: int, n: int, theta: float, phi: float, nmax: int) -> np.array:
             nmax: square matrix dimension
 
     Returns:
-            numpy array: inverse Clements T matrix
+            ndarray: inverse Clements T matrix
     """
     return np.transpose(T(m, n, theta, -phi, nmax))
 
 
-def T_null(m: int, n: int, U: np.array) -> List[Union[float, int]]:
+def T_null(m: int, n: int, U: np.ndarray) -> List:
     """Parameters of the T matrix to nullify U[m, n].
 
     Args:
@@ -79,8 +79,8 @@ def T_null(m: int, n: int, U: np.array) -> List[Union[float, int]]:
 
     if U[m, n] == 0:
         # Nothing here
-        theta = 0
-        phi = 0
+        theta = 0.0
+        phi = 0.0
     elif U[m - 1, n] == 0:
         # Swap in the divide-by-zero case
         theta = np.pi / 2
@@ -94,7 +94,7 @@ def T_null(m: int, n: int, U: np.array) -> List[Union[float, int]]:
     return [m - 1, m, theta, phi, nmax]
 
 
-def inv_T_null(m: int, n: int, U: np.array) -> List[Union[float, int]]:
+def inv_T_null(m: int, n: int, U: np.ndarray) -> List:
     """Parameters of the inverse T matrix to nullify U[m, n].
 
     Args:
@@ -115,8 +115,8 @@ def inv_T_null(m: int, n: int, U: np.array) -> List[Union[float, int]]:
 
     if U[m, n] == 0:
         # No swaps for the identity-like case
-        theta = 0
-        phi = 0
+        theta = 0.0
+        phi = 0.0
     elif U[m, n + 1] == 0:
         # Swap in the divide-by-zero case
         theta = np.pi / 2
@@ -129,15 +129,16 @@ def inv_T_null(m: int, n: int, U: np.array) -> List[Union[float, int]]:
     return [n, n + 1, theta, phi, nmax]
 
 
-def interf_rect_decompose(U: np.array) -> Tuple[List[np.array], np.array, List[np.array]]:
+def interf_rect_decompose(U: np.ndarray) \
+                        -> Tuple[List[List], np.ndarray, List[List]]:
     """Recatangular (Clement's) decomposition of the interferometer.
 
     Args:
         U: interferometer's unitary matrix
 
     Returns:
-        Tuple[List[np.array], np.array, List[np.array]]: matrices for
-            Clement's decomposition
+        tuple[list[list], ndarray[Any, Any], list[list]] : parameters for \
+         Clement's decomposition
 
     Raises:
         ValueError: The interferometer matrix is not unitary
