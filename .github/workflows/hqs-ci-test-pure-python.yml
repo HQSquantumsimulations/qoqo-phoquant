@@ -1,0 +1,25 @@
+name: HQS CI tests for pure python repos/folders
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  linting:
+    uses: ./.github/workflows/reusable_linting_pure_python.yml
+    with: 
+        python_folder: "."
+        linting_folder: "."
+
+  unittests:
+    uses: ./.github/workflows/reusable_tests_pure_python.yml
+    with:
+      python_folder: "."
+      # Test code coverage of rust core is over 80 percent
+      test_code_coverage: false
+      # Run tests also on windows runners
+      windows: false
+      # Run tests also on macos runners
+      macos: false
+      python_3_12: true

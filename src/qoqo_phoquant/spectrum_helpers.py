@@ -24,8 +24,8 @@ import json
 
 
 def energy_for_samples(
-    samples: np.ndarray, freq_ini: np.ndarray, freq_fin: np.ndarray,
-        E_ex: float = 0) -> np.ndarray:
+    samples: np.ndarray, freq_ini: np.ndarray, freq_fin: np.ndarray, E_ex: float = 0
+) -> np.ndarray:
     """Convert GBS samples to energies using molecular data.
 
     Args:
@@ -54,8 +54,8 @@ def energy_for_samples(
 
 
 def mol_GBS(
-    squeezing: np.ndarray, displ: np.ndarray, ops1: list, ops2: list,
-        shots: int) -> Tuple[Circuit, np.array]:
+    squeezing: np.ndarray, displ: np.ndarray, ops1: list, ops2: list, shots: int
+) -> Tuple[Circuit, np.ndarray]:
     """GBS for vibronic molecular type of input using qoqo.
 
     Args:
@@ -66,7 +66,7 @@ def mol_GBS(
         shots: number of shots and measurements
 
     Returns:
-        Tuple[Circuit, np.array]: qoqo circuit and measurements
+        Tuple[Circuit, np.ndarray]: qoqo circuit and measurements
 
     """
 
@@ -92,8 +92,7 @@ def mol_GBS(
 
     # Phase displacement
     for mode in range(nmodes):
-        circuit += operations.PhaseDisplacement(mode, np.abs(displ[mode]),
-                                                np.angle(displ[mode]))
+        circuit += operations.PhaseDisplacement(mode, np.abs(displ[mode]), np.angle(displ[mode]))
 
     # Measure
     for mode in range(nmodes):
