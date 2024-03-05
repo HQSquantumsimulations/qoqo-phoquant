@@ -54,8 +54,8 @@ def energy_for_samples(
 
 
 def mol_GBS(
-    squeezing: np.ndarray, displ: np.ndarray, ops1: list, ops2: list,
-        shots: int) -> Tuple[Circuit, np.ndarray]:
+    squeezing: np.ndarray, displ: np.ndarray, ops1: list, ops2: list, shots: int
+) -> Tuple[Circuit, np.ndarray]:
     """GBS for vibronic molecular type of input using qoqo.
 
     Args:
@@ -92,8 +92,7 @@ def mol_GBS(
 
     # Phase displacement
     for mode in range(nmodes):
-        circuit += operations.PhaseDisplacement(mode, np.abs(displ[mode]),
-                                                np.angle(displ[mode]))
+        circuit += operations.PhaseDisplacement(mode, np.abs(displ[mode]), np.angle(displ[mode]))
 
     # Measure
     for mode in range(nmodes):

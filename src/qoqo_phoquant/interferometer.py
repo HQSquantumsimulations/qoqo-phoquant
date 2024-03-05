@@ -129,8 +129,7 @@ def inv_T_null(m: int, n: int, U: np.ndarray) -> List:
     return [n, n + 1, theta, phi, nmax]
 
 
-def interf_rect_decompose(U: np.ndarray) \
-                        -> Tuple[List[List], np.ndarray, List[List]]:
+def interf_rect_decompose(U: np.ndarray) -> Tuple[List[List], np.ndarray, List[List]]:
     """Recatangular (Clement's) decomposition of the interferometer.
 
     Args:
