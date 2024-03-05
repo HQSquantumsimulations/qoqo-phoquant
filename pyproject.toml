@@ -16,7 +16,9 @@ dependencies = [
     "strawberryfields",
     "tensorflow",
     "numpy",
-    "matplotlib"
+    "matplotlib",
+    "pyyaml",
+    "types-PyYAML"
 ]
 
 [project.optional-dependencies]
