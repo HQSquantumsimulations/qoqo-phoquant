@@ -24,19 +24,19 @@ from qoqo_phoquant import molecule as mol
 from qoqo_phoquant import spectrum_helpers as sh
 
 
-def test_water_ionization() -> np.array:
+def test_water_ionization() -> None:
     """Compute photoionization vibronic spectrum for water molecule.
 
     Returns:
-        numpy array: energies corresponding to the samples;
+        ndarray: energies corresponding to the samples;
         one value per sample
     """
     # Make molecule
-    h2o = mol("../src/data/H2O_ion.json")
+    h2o = mol("src/data/H2O_ion.json")
 
     # Decompose interferometers
     ops1 = unitary_to_ops(h2o.U1)
-    ops2 = unitary_to_ops(h2o.U1)
+    ops2 = unitary_to_ops(h2o.U2)
 
     # Sample
     nshots = 1000
