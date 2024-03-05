@@ -179,7 +179,7 @@ def interf_rect_decompose(U: np.ndarray) \
     return T_inv_list, np.diag(mat), T_list
 
 
-def unitary_to_ops(U: np.array) -> List["operations.Operation"]:
+def unitary_to_ops(U: np.ndarray) -> List["operations.Operation"]:
     """Converts interferometer's unitary into list of qoqo operations.
 
     Args:

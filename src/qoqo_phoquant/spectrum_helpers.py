@@ -55,7 +55,7 @@ def energy_for_samples(
 
 def mol_GBS(
     squeezing: np.ndarray, displ: np.ndarray, ops1: list, ops2: list,
-        shots: int) -> Tuple[Circuit, np.array]:
+        shots: int) -> Tuple[Circuit, np.ndarray]:
     """GBS for vibronic molecular type of input using qoqo.
 
     Args:
@@ -66,7 +66,7 @@ def mol_GBS(
         shots: number of shots and measurements
 
     Returns:
-        Tuple[Circuit, np.array]: qoqo circuit and measurements
+        Tuple[Circuit, np.ndarray]: qoqo circuit and measurements
 
     """
 
