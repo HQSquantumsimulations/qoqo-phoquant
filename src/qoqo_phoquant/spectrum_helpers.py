@@ -16,6 +16,11 @@
 # the License.
 
 import numpy as np
+from qoqo_strawberry_fields import StrawberryFieldsBackend
+from qoqo import operations, Circuit
+from typing import Tuple
+import yaml
+import json
 
 
 def energy_for_samples(
