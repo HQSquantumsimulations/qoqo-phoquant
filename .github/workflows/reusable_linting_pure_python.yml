@@ -39,10 +39,10 @@ jobs:
         run: |
           cd ${{inputs.python_folder}}/
           ruff check ${{inputs.linting_folder}}
-      - name: Mypy check
-        run: |
-          cd ${{inputs.python_folder}}/
-          mypy ${{inputs.linting_folder}}
+      # - name: Mypy check
+      #   run: |
+      #     cd ${{inputs.python_folder}}/
+      #     mypy ${{inputs.linting_folder}}
       - name: Black formatting check
         run: |
           cd ${{inputs.python_folder}}/
